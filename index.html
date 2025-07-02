@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmoothieHub - Recettes de smoothies délicieux</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header avec recherche -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h1>🧃 SmoothieHub</h1>
+            </div>
+            
+            <!-- Barre de recherche -->
+            <div class="search-section">
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Cherchez un smoothie..." autocomplete="off">
+                    <div class="search-icon">🔍</div>
+                </div>
+                
+                <!-- Section filtres améliorée -->
+                <div class="filters-section">
+                    <div class="filters-header">
+                        <div class="filters-buttons">
+                            <button class="filters-btn" id="filtersBtn">
+                                <span class="filters-icon">🚫</span>
+                                <span class="filters-text">Exclure des ingrédients</span>
+                                <span class="filters-count" id="filtersCount">0</span>
+                            </button>
+                            
+                            <button class="clear-all-filters-btn" id="clearAllFiltersBtn" style="display: none;">
+                                <span class="clear-icon">🗑️</span>
+                                <span class="clear-text">Effacer tout</span>
+                            </button>
+                        </div>
+                        
+                        <div class="active-filters" id="activeFilters">
+                            <!-- Les filtres actifs apparaîtront ici -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Popup des filtres -->
+    <div class="filters-popup" id="filtersPopup">
+        <div class="filters-popup-content">
+            <div class="filters-popup-header">
+                <h3>🚫 Exclure des ingrédients</h3>
+                <button class="close-popup" id="closePopup">✕</button>
+            </div>
+            
+            <div class="filters-search">
+                <input type="text" id="filtersSearch" placeholder="Rechercher un ingrédient...">
+            </div>
+            
+            <div class="filters-grid" id="filtersGrid">
+                <!-- Les filtres seront générés dynamiquement -->
+            </div>
+            
+            <div class="filters-popup-footer">
+                <button class="clear-filters-btn" id="clearFilters">Effacer tout</button>
+                <button class="apply-filters-btn" id="applyFilters">Appliquer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay pour le popup -->
+    <div class="popup-overlay" id="popupOverlay"></div>
+
+    <!-- Loader -->
+    <div class="loader" id="loader">
+        <div class="smoothie-spinner">🧃</div>
+        <p>Préparation des smoothies...</p>
+    </div>
+
+    <!-- Contenu principal -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Page d'accueil -->
+            <section id="homePage" class="page active">
+                <div class="hero-section">
+                    <h2>Découvrez nos délicieuses recettes</h2>
+                    <p>Des smoothies sains et savoureux pour tous les goûts</p>
+                    <div class="stats">
+                        <span id="recipesCount">0</span> recettes disponibles
+                    </div>
+                </div>
+                
+                <div class="recipes-grid" id="recipesGrid">
+                    <!-- Les cartes de smoothies seront générées ici -->
+                </div>
+                
+                <div class="load-more-section" id="loadMoreSection" style="display: none;">
+                    <button class="load-more-btn" id="loadMoreBtn">Voir plus de recettes</button>
+                </div>
+                
+                <div class="no-results" id="noResults" style="display: none;">
+                    <div class="no-results-content">
+                        <div class="no-results-icon">😔</div>
+                        <h3>Aucun smoothie trouvé</h3>
+                        <p>Essayez de modifier vos critères de recherche ou vos filtres</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Page détail recette -->
+            <section id="recipePage" class="page">
+                <button class="back-btn" id="backBtn">← Retour aux recettes</button>
+                
+                <div class="recipe-detail" id="recipeDetail">
+                    <!-- Le contenu de la recette sera généré ici -->
+                </div>
+                
+                <div class="similar-recipes">
+                    <h3>Smoothies similaires</h3>
+                    <div class="similar-grid" id="similarGrid">
+                        <!-- Les suggestions seront générées ici -->
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 SmoothieHub - Des recettes pour une vie plus saine 🌱</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="csv-loader.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
