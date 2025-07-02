@@ -120,6 +120,10 @@ let displayedRecipesCount = 0;
 let allIngredients = [];
 let filteredIngredients = [];
 
+// Variables pour le scroll
+let lastScrollTop = 0;
+let scrollTimeout;
+
 // Éléments DOM
 const loader = document.getElementById('loader');
 const searchInput = document.getElementById('searchInput');
@@ -133,6 +137,7 @@ const similarGrid = document.getElementById('similarGrid');
 const recipesCount = document.getElementById('recipesCount');
 const loadMoreSection = document.getElementById('loadMoreSection');
 const loadMoreBtn = document.getElementById('loadMoreBtn');
+const header = document.querySelector('.header');
 
 // Éléments popup filtres
 const filtersBtn = document.getElementById('filtersBtn');
@@ -152,6 +157,7 @@ const clearAllFiltersBtn = document.getElementById('clearAllFiltersBtn');
 // Initialisation
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
+    setupScrollHandler();
 });
 
 async function initializeApp() {
@@ -200,6 +206,46 @@ async function initializeApp() {
         console.error('Erreur lors de l\'initialisation:', error);
         loader.innerHTML = '<p>Erreur lors du chargement des recettes</p>';
     }
+}
+
+function setupScrollHandler() {
+    let ticking = false;
+    
+    function updateHeader() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollDirection = scrollTop > lastScrollTop ? 'down' : 'up';
+        
+        // Seuil de déclenchement réduit pour une meilleure réactivité
+        const threshold = 80;
+        
+        if (scrollTop > threshold) {
+            if (scrollDirection === 'down') {
+                // Scroll vers le bas - cacher le header
+                header.classList.add('hidden');
+                header.classList.add('compact');
+            } else {
+                // Scroll vers le haut - montrer le header en mode compact
+                header.classList.remove('hidden');
+                header.classList.add('compact');
+            }
+        } else {
+            // En haut de la page - header normal
+            header.classList.remove('hidden');
+            header.classList.remove('compact');
+        }
+        
+        lastScrollTop = scrollTop;
+        ticking = false;
+    }
+    
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(updateHeader);
+            ticking = true;
+        }
+    }
+    
+    window.addEventListener('scroll', requestTick, { passive: true });
 }
 
 function generateIngredientsList() {
@@ -582,6 +628,14 @@ function showRecipeDetail(recipe) {
         `<li>${step}</li>`
     ).join('');
     
+    // Créer le lien source
+    let sourceContent = '';
+    if (recipe.link && recipe.link.trim() !== '') {
+        sourceContent = `<a href="${recipe.link}" target="_blank" rel="noopener noreferrer" class="recipe-link">Lien du site</a>`;
+    } else {
+        sourceContent = recipe.source || 'Source inconnue';
+    }
+    
     recipeDetail.innerHTML = `
         <h1 class="recipe-title">${recipe.title}</h1>
         
@@ -599,7 +653,7 @@ function showRecipeDetail(recipe) {
             </ol>
         </div>
         
-        ${recipe.source ? `<div class="recipe-source">Source: ${recipe.source}</div>` : ''}
+        <div class="recipe-source">Source: ${sourceContent}</div>
     `;
     
     // Afficher les smoothies similaires

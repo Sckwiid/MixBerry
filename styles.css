@@ -11,6 +11,7 @@
     --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.15);
     --border-radius: 12px;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --header-height: 220px;
 }
 
 * {
@@ -25,6 +26,7 @@ body {
     color: var(--text-dark);
     background-color: var(--bg-light);
     overflow-x: hidden;
+    padding-top: var(--header-height);
 }
 
 .container {
@@ -33,15 +35,55 @@ body {
     padding: 0 20px;
 }
 
-/* Header */
+/* Header avec auto-hide amélioré */
 .header {
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     color: var(--white);
     padding: 2rem 0;
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: -20px; /* Étendu de 20px vers la gauche */
+    right: -20px; /* Étendu de 20px vers la droite */
     z-index: 100;
     box-shadow: var(--shadow);
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
+                padding 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                background 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    height: var(--header-height);
+    /* Ajout de padding pour compenser l'extension */
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.header.hidden {
+    transform: translateY(-100%);
+}
+
+.header.compact {
+    padding: 1.2rem 20px; /* Maintenir le padding horizontal */
+    height: auto;
+    background: linear-gradient(135deg, rgba(255, 107, 157, 0.95), rgba(78, 205, 196, 0.95));
+    backdrop-filter: blur(10px);
+}
+
+.header.compact .logo h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+.header.compact .search-section {
+    max-width: 600px;
+}
+
+.header.compact .filters-btn,
+.header.compact .clear-all-filters-btn {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.header.compact .filters-btn:hover,
+.header.compact .clear-all-filters-btn:hover {
+    background: rgba(255, 255, 255, 0.4);
 }
 
 .logo h1 {
@@ -50,11 +92,13 @@ body {
     text-align: center;
     margin-bottom: 2rem;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    transition: var(--transition);
 }
 
 .search-section {
     max-width: 800px;
     margin: 0 auto;
+    transition: var(--transition);
 }
 
 .search-bar {
@@ -694,6 +738,18 @@ body {
     text-align: center;
 }
 
+.recipe-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.recipe-link:hover {
+    color: var(--secondary-color);
+    text-decoration: underline;
+}
+
 /* Smoothies similaires */
 .similar-recipes {
     margin-top: 3rem;
@@ -777,15 +833,85 @@ body {
     margin-top: 3rem;
 }
 
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+}
+
+.footer-links {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.footer-link {
+    color: var(--white);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.footer-link:hover {
+    color: var(--accent-color);
+    transform: translateY(-2px);
+}
+
+.footer-credits {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    text-align: center;
+    line-height: 1.5;
+}
+
+.footer-credits a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.footer-credits a:hover {
+    color: var(--white);
+    text-decoration: underline;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
+    :root {
+        --header-height: 200px;
+    }
+    
+    body {
+        padding-top: var(--header-height);
+    }
+    
     .container {
         padding: 0 15px;
+    }
+    
+    .header {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .header.compact {
+        padding: 1.2rem 15px;
     }
     
     .logo h1 {
         font-size: 2rem;
         margin-bottom: 1.5rem;
+    }
+    
+    .header.compact .logo h1 {
+        font-size: 1.6rem;
+        margin-bottom: 0.8rem;
     }
     
     .hero-section h2 {
@@ -837,11 +963,37 @@ body {
         width: 100%;
         max-width: 300px;
     }
+    
+    .footer-links {
+        flex-direction: column;
+        gap: 1rem;
+    }
 }
 
 @media (max-width: 480px) {
+    :root {
+        --header-height: 180px;
+    }
+    
+    body {
+        padding-top: var(--header-height);
+    }
+    
+    .header {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    .header.compact {
+        padding: 1.2rem 10px;
+    }
+    
     .logo h1 {
         font-size: 1.8rem;
+    }
+    
+    .header.compact .logo h1 {
+        font-size: 1.4rem;
     }
     
     .hero-section h2 {
