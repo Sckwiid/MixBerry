@@ -248,6 +248,174 @@ function setupScrollHandler() {
     window.addEventListener('scroll', requestTick, { passive: true });
 }
 
+// Fonction pour nettoyer et normaliser les ingrédients
+function cleanAndNormalizeIngredient(ingredient) {
+    if (!ingredient) return '';
+    
+    // Nettoyer les caractères spéciaux et normaliser
+    let cleaned = ingredient.trim().toLowerCase();
+    
+    // Enlever les caractères spéciaux problématiques
+    cleaned = cleaned.replace(/["\[\]']/g, '');
+    cleaned = cleaned.replace(/[^\w\sàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ]/g, '');
+    
+    // Normaliser les variantes communes
+    const normalizations = {
+        // Sucre et édulcorants
+        'sucre': 'sucre',
+        'sucre de palme': 'sucre',
+        'sucre blanc': 'sucre',
+        'sucre brun': 'sucre',
+        'sucre roux': 'sucre',
+        'cassonade': 'sucre',
+        'sirop d\'érable': 'sucre',
+        'sirop de coco': 'sucre',
+        'sirop de chocolat': 'sucre',
+        'miel': 'miel',
+        'stevia': 'édulcorant',
+        'édulcorant': 'édulcorant',
+        
+        // Yaourts
+        'yaourt': 'yaourt',
+        'yaourt nature': 'yaourt',
+        'yaourt grec': 'yaourt',
+        'yaourt à la vanille': 'yaourt',
+        'yaourt à la fraise': 'yaourt',
+        'yaourt glacé': 'yaourt',
+        'yaourt sans matières grasses': 'yaourt',
+        'yaourt faible en gras': 'yaourt',
+        'yaourt allégé': 'yaourt',
+        'gelée de fraise': 'yaourt',
+        
+        // Laits
+        'lait': 'lait',
+        'lait entier': 'lait',
+        'lait écrémé': 'lait',
+        'lait demi-écrémé': 'lait',
+        'lait froid': 'lait',
+        'lait en poudre': 'lait',
+        'lait d\'amande': 'lait végétal',
+        'lait de coco': 'lait végétal',
+        'lait d\'avoine': 'lait végétal',
+        'lait de soja': 'lait végétal',
+        'lait de riz': 'lait végétal',
+        'lait de noisette': 'lait végétal',
+        
+        // Fruits - normaliser les pluriels et variantes
+        'bananes': 'banane',
+        'banane mûre': 'banane',
+        'banane congelée': 'banane',
+        'fraises': 'fraise',
+        'fraises fraîches': 'fraise',
+        'fraises surgelées': 'fraise',
+        'fraises congelées': 'fraise',
+        'pommes': 'pomme',
+        'pomme verte': 'pomme',
+        'oranges': 'orange',
+        'kiwis': 'kiwi',
+        'kiwi mûr': 'kiwi',
+        'pêches': 'pêche',
+        'pêche mûre': 'pêche',
+        'abricots': 'abricot',
+        'framboises': 'framboise',
+        'framboises fraîches': 'framboise',
+        'myrtilles': 'myrtille',
+        'myrtilles fraîches': 'myrtille',
+        'mûres': 'mûre',
+        'carottes': 'carotte',
+        'carotte moyenne': 'carotte',
+        'baies': 'fruits rouges',
+        'fruits rouges': 'fruits rouges',
+        
+        // Légumes verts
+        'épinards': 'épinards',
+        'épinards frais': 'épinards',
+        'concombre': 'concombre',
+        'avocat': 'avocat',
+        'betterave': 'betterave',
+        'betterave cuite': 'betterave',
+        
+        // Herbes et épices
+        'menthe': 'menthe',
+        'menthe fraîche': 'menthe',
+        'basilic': 'basilic',
+        'gingembre': 'gingembre',
+        'gingembre frais': 'gingembre',
+        'gingembre râpé': 'gingembre',
+        'cannelle': 'cannelle',
+        'cannelle moulue': 'cannelle',
+        'vanille': 'vanille',
+        'extrait de vanille': 'vanille',
+        'curcuma': 'curcuma',
+        'spiruline': 'spiruline',
+        
+        // Graines et noix
+        'graines de chia': 'graines',
+        'graines de lin': 'graines',
+        'graines de tournesol': 'graines',
+        'amandes': 'noix',
+        'amandes effilées': 'noix',
+        'beurre d\'amande': 'beurre de noix',
+        'beurre de cacahuète': 'beurre de noix',
+        'noix de muscade': 'épices',
+        'noix de muscade moulue': 'épices',
+        
+        // Liquides
+        'eau de coco': 'eau de coco',
+        'eau': 'eau',
+        'jus d\'orange': 'jus',
+        'jus de citron': 'jus',
+        'jus de lime': 'jus',
+        'jus de framboise': 'jus',
+        'jus de canneberge': 'jus',
+        'jus de fruits': 'jus',
+        'jus frais': 'jus',
+        'concentré de jus d\'orange': 'jus',
+        'concentré de jus de pomme': 'jus',
+        'limonade glacée': 'jus',
+        'boisson ananas-orange': 'jus',
+        
+        // Glace et froid
+        'glaçons': 'glace',
+        'glace pilée': 'glace',
+        'glace': 'glace',
+        
+        // Autres ingrédients
+        'protéine': 'protéine',
+        'protéine en poudre': 'protéine',
+        'petit-déjeuner instantané': 'protéine',
+        'cacao': 'cacao',
+        'cacao en poudre': 'cacao',
+        'chocolat': 'chocolat',
+        'purée de citrouille': 'citrouille',
+        'citron': 'citron',
+        'citron vert': 'citron vert',
+        'lime': 'citron vert',
+        'fruit de la passion': 'fruit exotique',
+        'papaye': 'fruit exotique',
+        'ananas': 'ananas',
+        'ananas frais': 'ananas',
+        'mangue': 'mangue',
+        'mangue mûre': 'mangue',
+        'cantaloup': 'melon'
+    };
+    
+    // Appliquer les normalisations
+    for (const [key, value] of Object.entries(normalizations)) {
+        if (cleaned.includes(key)) {
+            return value;
+        }
+    }
+    
+    // Si pas de normalisation trouvée, retourner l'ingrédient nettoyé
+    // Mais seulement s'il fait plus d'un caractère et ne contient pas que des caractères spéciaux
+    if (cleaned.length > 1 && /[a-zA-Zàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ]/.test(cleaned)) {
+        return cleaned;
+    }
+    
+    return '';
+}
+
 function generateIngredientsList() {
     const ingredientsSet = new Set();
     
@@ -255,13 +423,18 @@ function generateIngredientsList() {
     allRecipes.forEach(recipe => {
         if (recipe.NER) {
             recipe.NER.split(',').forEach(ingredient => {
-                ingredientsSet.add(ingredient.trim().toLowerCase());
+                const cleaned = cleanAndNormalizeIngredient(ingredient.trim());
+                if (cleaned) {
+                    ingredientsSet.add(cleaned);
+                }
             });
         }
     });
     
     allIngredients = Array.from(ingredientsSet).sort();
     filteredIngredients = [...allIngredients];
+    
+    console.log('Ingrédients normalisés:', allIngredients);
     
     // Générer la grille des filtres
     generateFiltersGrid();
@@ -448,11 +621,12 @@ function filterRecipes() {
             (recipe.NER && recipe.NER.toLowerCase().includes(searchTerm)) ||
             recipe.ingredients.toLowerCase().includes(searchTerm);
         
-        // Filtrage par exclusion d'ingrédients
+        // Filtrage par exclusion d'ingrédients (avec normalisation)
         const hasExcludedIngredients = recipe.NER && 
-            recipe.NER.split(',').some(ingredient => 
-                excludedIngredients.has(ingredient.trim().toLowerCase())
-            );
+            recipe.NER.split(',').some(ingredient => {
+                const normalizedIngredient = cleanAndNormalizeIngredient(ingredient.trim());
+                return excludedIngredients.has(normalizedIngredient);
+            });
         
         return matchesSearch && !hasExcludedIngredients;
     });
@@ -527,11 +701,12 @@ function createRecipeCard(recipe, index = 0) {
     card.className = 'recipe-card';
     card.style.animationDelay = `${(index % 20) * 0.05}s`;
     
-    // Extraire quelques ingrédients pour l'aperçu
+    // Extraire quelques ingrédients pour l'aperçu (avec normalisation)
     const ingredients = recipe.NER ? recipe.NER.split(',').slice(0, 4) : [];
-    const ingredientsPreview = ingredients.map(ing => 
-        `<span class="ingredient">${getIngredientEmoji(ing.trim())} ${ing.trim()}</span>`
-    ).join('');
+    const ingredientsPreview = ingredients.map(ing => {
+        const normalizedIng = cleanAndNormalizeIngredient(ing.trim()) || ing.trim();
+        return `<span class="ingredient">${getIngredientEmoji(normalizedIng)} ${normalizedIng}</span>`;
+    }).join('');
     
     card.innerHTML = `
         <h3>${recipe.title}</h3>
@@ -548,70 +723,73 @@ function createRecipeCard(recipe, index = 0) {
 
 function getIngredientEmoji(ingredient) {
     const emojiMap = {
+        // Fruits
         'banane': '🍌',
-        'bananes': '🍌',
         'fraise': '🍓',
-        'fraises': '🍓',
         'pomme': '🍎',
-        'pommes': '🍎',
         'orange': '🍊',
-        'oranges': '🍊',
         'ananas': '🍍',
         'mangue': '🥭',
         'kiwi': '🥝',
-        'kiwis': '🥝',
+        'pêche': '🍑',
+        'abricot': '🍑',
+        'myrtille': '🫐',
+        'framboise': '🍇',
+        'mûre': '🍇',
+        'fruits rouges': '🍓',
+        'fruit exotique': '🥭',
+        'melon': '🍈',
+        'citron': '🍋',
+        'citron vert': '🍋',
+        
+        // Légumes
         'avocat': '🥑',
         'épinards': '🥬',
         'concombre': '🥒',
         'carotte': '🥕',
-        'carottes': '🥕',
         'betterave': '🟣',
-        'myrtilles': '🫐',
-        'framboises': '🍇',
-        'mûres': '🍇',
-        'pêches': '🍑',
-        'pêche': '🍑',
-        'abricots': '🍑',
-        'abricot': '🍑',
-        'papaye': '🥭',
-        'cantaloup': '🍈',
+        'citrouille': '🎃',
+        
+        // Produits laitiers
         'lait': '🥛',
+        'lait végétal': '🌱',
         'yaourt': '🥛',
-        'yaourt grec': '🥛',
+        
+        // Édulcorants
         'miel': '🍯',
-        'citron': '🍋',
-        'citron vert': '🍋',
-        'lime': '🍋',
+        'sucre': '🍯',
+        'édulcorant': '🍯',
+        
+        // Herbes et épices
         'menthe': '🌿',
         'basilic': '🌿',
         'gingembre': '🫚',
         'cannelle': '🟤',
         'vanille': '🤍',
+        'curcuma': '🟡',
+        'spiruline': '🌿',
+        'épices': '🌶️',
+        
+        // Chocolat et cacao
         'cacao': '🍫',
         'chocolat': '🍫',
-        'spiruline': '🌿',
-        'graines de chia': '🌱',
-        'graines de lin': '🌱',
-        'graines de tournesol': '🌻',
-        'amandes': '🌰',
-        'beurre d\'amande': '🌰',
-        'beurre de cacahuète': '🥜',
+        
+        // Graines et noix
+        'graines': '🌱',
+        'noix': '🌰',
+        'beurre de noix': '🥜',
+        
+        // Liquides
         'eau de coco': '🥥',
-        'lait de coco': '🥥',
-        'lait d\'amande': '🥛',
-        'lait d\'avoine': '🥛',
-        'protéine': '💪',
-        'sirop d\'érable': '🍁',
-        'curcuma': '🟡',
-        'fruit de la passion': '🟡',
-        'jus de fruits': '🧃',
-        'jus frais': '🧃',
-        'jus d\'orange': '🍊',
-        'jus de canneberge': '🔴',
-        'jus de framboise': '🍇'
+        'eau': '💧',
+        'jus': '🧃',
+        'glace': '🧊',
+        
+        // Protéines
+        'protéine': '💪'
     };
     
-    return emojiMap[ingredient.toLowerCase()] || '🌱';
+    return emojiMap[ingredient.toLowerCase()] || '🥤';
 }
 
 function showRecipeDetail(recipe) {
@@ -701,17 +879,32 @@ function cleanPreparationSteps(directions) {
 }
 
 function displaySimilarRecipes(currentRecipe) {
-    const currentIngredients = new Set(
-        currentRecipe.NER ? currentRecipe.NER.split(',').map(ing => ing.trim().toLowerCase()) : []
-    );
+    const currentIngredients = new Set();
+    
+    // Normaliser les ingrédients de la recette actuelle
+    if (currentRecipe.NER) {
+        currentRecipe.NER.split(',').forEach(ing => {
+            const normalized = cleanAndNormalizeIngredient(ing.trim());
+            if (normalized) {
+                currentIngredients.add(normalized);
+            }
+        });
+    }
     
     // Trouver les recettes similaires
     const similarRecipes = allRecipes
         .filter(recipe => recipe.id !== currentRecipe.id)
         .map(recipe => {
-            const recipeIngredients = new Set(
-                recipe.NER ? recipe.NER.split(',').map(ing => ing.trim().toLowerCase()) : []
-            );
+            const recipeIngredients = new Set();
+            
+            if (recipe.NER) {
+                recipe.NER.split(',').forEach(ing => {
+                    const normalized = cleanAndNormalizeIngredient(ing.trim());
+                    if (normalized) {
+                        recipeIngredients.add(normalized);
+                    }
+                });
+            }
             
             const commonIngredients = [...currentIngredients].filter(ing => 
                 recipeIngredients.has(ing)
