@@ -11,7 +11,7 @@
     --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.15);
     --border-radius: 12px;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --header-height: 220px;
+    --header-height: 280px; /* Augmenté pour couvrir le titre */
 }
 
 * {
@@ -39,7 +39,7 @@ body {
 .header {
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     color: var(--white);
-    padding: 2rem 0;
+    padding: 2rem 0 4rem 0; /* Augmenté le padding bottom encore plus */
     position: fixed;
     top: 0;
     left: -20px; /* Étendu de 20px vers la gauche */
@@ -49,7 +49,7 @@ body {
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
                 padding 0.4s cubic-bezier(0.4, 0, 0.2, 1),
                 background 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    height: var(--header-height);
+    min-height: var(--header-height);
     /* Ajout de padding pour compenser l'extension */
     padding-left: 20px;
     padding-right: 20px;
@@ -60,8 +60,8 @@ body {
 }
 
 .header.compact {
-    padding: 1.2rem 20px; /* Maintenir le padding horizontal */
-    height: auto;
+    padding: 1.2rem 20px 2.5rem 20px; /* Augmenté le padding bottom en mode compact */
+    min-height: auto;
     background: linear-gradient(135deg, rgba(255, 107, 157, 0.95), rgba(78, 205, 196, 0.95));
     backdrop-filter: blur(10px);
 }
@@ -491,7 +491,7 @@ body {
 /* Main content */
 .main-content {
     min-height: calc(100vh - 200px);
-    padding: 3rem 0;
+    padding: 4rem 0 3rem 0; /* Augmenté le padding-top de 3rem à 4rem pour plus d'espace */
 }
 
 .page {
@@ -884,7 +884,7 @@ body {
 /* Responsive */
 @media (max-width: 768px) {
     :root {
-        --header-height: 200px;
+        --header-height: 260px; /* Augmenté pour mobile */
     }
     
     body {
@@ -898,10 +898,11 @@ body {
     .header {
         padding-left: 15px;
         padding-right: 15px;
+        padding-bottom: 3.5rem; /* Augmenté pour mobile */
     }
     
     .header.compact {
-        padding: 1.2rem 15px;
+        padding: 1.2rem 15px 2.2rem 15px; /* Augmenté le padding bottom en mode compact pour mobile */
     }
     
     .logo h1 {
@@ -968,11 +969,15 @@ body {
         flex-direction: column;
         gap: 1rem;
     }
+    
+    .main-content {
+        padding: 3rem 0; /* Ajusté pour mobile */
+    }
 }
 
 @media (max-width: 480px) {
     :root {
-        --header-height: 180px;
+        --header-height: 240px; /* Augmenté pour très petit mobile */
     }
     
     body {
@@ -982,10 +987,11 @@ body {
     .header {
         padding-left: 10px;
         padding-right: 10px;
+        padding-bottom: 3rem; /* Augmenté pour très petit mobile */
     }
     
     .header.compact {
-        padding: 1.2rem 10px;
+        padding: 1.2rem 10px 2rem 10px; /* Augmenté le padding bottom en mode compact pour très petit mobile */
     }
     
     .logo h1 {
@@ -1014,6 +1020,10 @@ body {
     
     .filters-popup-content {
         max-height: 85vh;
+    }
+    
+    .main-content {
+        padding: 2.5rem 0; /* Ajusté pour très petit mobile */
     }
 }
 
